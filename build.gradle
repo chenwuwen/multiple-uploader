@@ -1,0 +1,62 @@
+
+plugins {
+    id 'java'
+}
+
+allprojects {
+
+    group 'cn.kanyun'
+    version '1.0-SNAPSHOT'
+    sourceCompatibility = 1.8
+
+}
+
+subprojects {
+
+    apply plugin: 'java'
+//    需要注意的而是,gradlew clean install时并没有把依赖打入到jar包中,而是生成了一个与jar包名称一致的pom文件,里面记录了依赖的信息,当上传jar包时,该pom文件也会被上传
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+
+        implementation group: 'com.google.guava', name: 'guava', version: '28.1-jre'
+
+        compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+
+        compileOnly group: 'org.slf4j', name: 'slf4j-api', version: '1.7.29'
+        testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+        compileOnly group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    }
+}
+
+
+project(':multiple-uploader-qiniu'){
+    description = '七牛云桥接器'
+    dependencies {
+        compileOnly project(':multiple-uploader-api')
+    }
+}
+
+
+project(':multiple-uploader-upyun'){
+    description = '又拍云桥接器'
+    dependencies {
+        compileOnly project(':multiple-uploader-api')
+    }
+}
+
+
+

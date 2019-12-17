@@ -1,0 +1,5 @@
+rootProject.name = 'multiple-uploader'
+include 'multiple-uploader-api'
+include 'multiple-uploader-qiniu'
+include 'multiple-uploader-upyun'
+
