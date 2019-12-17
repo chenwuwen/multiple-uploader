@@ -33,6 +33,7 @@ public interface AbstractUploaderSubject {
      * 通知观察者
      * 典型的推模型：
      * 主题对象向观察者推送主题的详细信息，不管观察者是否需要，推送的信息通常是主题对象的全部或部分数据
+     * 推模式、拉模式区别：https://www.iteye.com/blog/raychase-1337015
      * @param sourcePath
      * @param targetPath
      */

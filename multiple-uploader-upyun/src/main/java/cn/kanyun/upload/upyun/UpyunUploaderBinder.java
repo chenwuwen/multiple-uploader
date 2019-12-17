@@ -4,6 +4,7 @@ import cn.kanyun.upload.spi.IUploaderFactory;
 import cn.kanyun.upload.spi.UploaderFactoryBinder;
 import cn.kanyun.upload.exception.InitUploaderException;
 import com.UpYun;
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,6 +56,7 @@ public class UpyunUploaderBinder implements UploaderFactoryBinder {
             userName = prop.getProperty(AuthInfo.USERNAME.toString());
             password = prop.getProperty(AuthInfo.PASSWORD.toString());
             bucket = prop.getProperty(AuthInfo.BUCKET.toString());
+            checkConfigValue(userName, password, bucket);
         } catch (Exception e) {
             log.error("[{}]类, Classpath下[{}] 文件,使用出错", this.getClass().getName(), CONFIG_FILE_NAME);
             throw new InitUploaderException(this.getClass().getName() + "类读取" + CONFIG_FILE_NAME + "配置文件出错：" + e.getMessage());
@@ -70,8 +72,21 @@ public class UpyunUploaderBinder implements UploaderFactoryBinder {
             upyun.setApiDomain(UpYun.ED_AUTO);
             defaultUploaderContext.setUpyun(upyun);
         } catch (Exception e) {
-            log.error("[{}]类,初始化报错,[{}]", this.getClass().getName(), e);
-            throw new InitUploaderException("初始化又拍云报错" + e.getMessage());
+            log.error("[{}]类,初始化报错,详细信息 ⇓", this.getClass().getName(), e);
+            throw new InitUploaderException("初始化又拍云报错：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 检查配置文件中key的对应值是否为空
+     *
+     * @param bucket
+     * @param userName
+     * @param password
+     */
+    void checkConfigValue(String bucket, String userName, String password) throws Exception {
+        if (Strings.isNullOrEmpty(bucket) || Strings.isNullOrEmpty(userName) || Strings.isNullOrEmpty(password)) {
+            throw new Exception("请检查" + CONFIG_FILE_NAME + "文件中[" + AuthInfo.USERNAME.toString() + "," + AuthInfo.PASSWORD.toString() + "," + AuthInfo.BUCKET.toString() + "]的配置");
         }
     }
 }

@@ -3,6 +3,7 @@ package cn.kanyun.upload.qiniu;
 import cn.kanyun.upload.spi.IUploaderFactory;
 import cn.kanyun.upload.spi.UploaderFactoryBinder;
 import cn.kanyun.upload.exception.InitUploaderException;
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
@@ -48,19 +49,19 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
     void init() throws InitUploaderException {
         log.info("common-uploader-qiniu 七牛云桥接器开始进行初始化");
 //      todo 这里可以读取classpath下特殊的storage.properties文件
-        String fileName = CONFIG_FILE_NAME;
-        String accessKey = "ChZnwyjHOLonZxL1AMHdv-SGaFE8C9dpjUiEq1Pn";
-        String secretKey = "9JuzUfV1RNAtEhDZ3vEHFR2x2ClJT36iKAp5XO0x";
-        String bucket = "hanlang";
+        String accessKey = "";
+        String secretKey = "";
+        String bucket = "";
         try {
-            URL url = Resources.getResource(fileName);
+            URL url = Resources.getResource(CONFIG_FILE_NAME);
             Properties prop = new Properties();
             prop.load(url.openStream());
             accessKey = prop.getProperty(AuthInfo.ACCESS_KEY.toString());
             secretKey = prop.getProperty(AuthInfo.SECRET_KEY.toString());
             bucket = prop.getProperty(AuthInfo.BUCKET.toString());
+            checkConfigValue(accessKey, secretKey, bucket);
         } catch (Exception e) {
-            log.error("[{}]类, Classpath下[{}] 文件,使用出错", this.getClass().getName(), fileName);
+            log.error("[{}]类, Classpath下[{}] 文件,使用出错", this.getClass().getName(), CONFIG_FILE_NAME);
             throw new InitUploaderException(this.getClass().getName() + "类读取" + CONFIG_FILE_NAME + "配置文件出错：" + e.getMessage());
         }
         try {
@@ -74,8 +75,23 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
             defaultUploaderContext.setUploadManager(uploadManager);
             defaultUploaderContext.setUpToken(upToken);
         } catch (Exception e) {
-            log.error("[{}]类,初始化报错,[{}]", this.getClass().getName(), e);
-            throw new InitUploaderException("初始化七牛云报错" + e.getMessage());
+            log.error("[{}]类,初始化报错,详细信息 ⇓", this.getClass().getName(), e);
+            throw new InitUploaderException("初始化七牛云报错：" + e.getMessage());
+        }
+    }
+
+
+    /**
+     * 检查配置文件中key的对应值是否为空
+     *
+     * @param accessKey
+     * @param secretKey
+     * @param bucket
+     * @throws Exception
+     */
+    void checkConfigValue(String accessKey, String secretKey, String bucket) throws Exception {
+        if (Strings.isNullOrEmpty(bucket) || Strings.isNullOrEmpty(accessKey) || Strings.isNullOrEmpty(secretKey)) {
+            throw new Exception("请检查" + CONFIG_FILE_NAME + "文件中[" + AuthInfo.SECRET_KEY.toString() + "," + AuthInfo.ACCESS_KEY.toString() + "," + AuthInfo.BUCKET.toString() + "]的配置");
         }
     }
 }

@@ -2,7 +2,10 @@ package cn.kanyun.upload.upyun;
 
 import cn.kanyun.upload.spi.Uploader;
 import com.UpYun;
+import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 /**
  * @author Kanyun
@@ -25,7 +28,18 @@ public class UpYunUploader implements Uploader {
     @Override
     public void push(String sourcePath, String targetPath) {
         log.info(" [{}] 类 push([{},{}])", this.getClass().getName(), sourcePath, targetPath);
+        try {
+            boolean state = invokePush(sourcePath, targetPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UpException e) {
+            e.printStackTrace();
+        }
     }
 
+
+    private boolean invokePush(String sourcePath, String targetPath) throws IOException, UpException {
+        return upyun.writeFile(sourcePath, targetPath);
+    }
 
 }

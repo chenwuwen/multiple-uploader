@@ -104,14 +104,15 @@ public class UploaderFactory {
                 IUploaderFactory uploaderFactory = binder.getUploaderFactory();
                 log.info("查找到IUploaderFactory实现类：[{}] ", binder.getUploaderFactoryClassStr());
                 concreteUploaderSubject.addObserver(uploaderFactory.getUploader());
+            } catch (InitUploaderException e) {
+//                CDN配置类加载出错
+                log.error("multiple-uploader 初始化时 [{}]捕捉到自定义异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
+                e.printStackTrace();
+                continue;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
                 e.printStackTrace();
-            } catch (InitUploaderException e) {
-//                CDN配置类加载出错
-                e.printStackTrace();
-                continue;
             }
         }
         INITIALIZATION_STATE = SUCCESSFUL_INITIALIZATION;

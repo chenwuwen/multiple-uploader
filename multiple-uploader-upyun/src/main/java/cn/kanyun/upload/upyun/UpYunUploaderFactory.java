@@ -18,6 +18,7 @@ public class UpYunUploaderFactory implements IUploaderFactory {
 
     @Override
     public Uploader getUploader() {
+        log.info("UpYunUploaderFactory执行getUploader()方法,upyun : [{}]  ", this.upyun);
         Uploader uploader = new UpYunUploader(this.getUpyun());
         return uploader;
     }
