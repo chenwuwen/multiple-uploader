@@ -1,5 +1,6 @@
 package cn.kanyun.upload;
 
+import cn.kanyun.upload.handler.PushCallback;
 import cn.kanyun.upload.spi.Uploader;
 import cn.kanyun.upload.subject.AbstractUploaderSubject;
 import cn.kanyun.upload.subject.ConcreteUploaderSubject;
@@ -29,6 +30,11 @@ public class DefaultUploader implements Uploader {
     @Override
     public void push(String sourcePath, String targetPath) {
         subject.notify(sourcePath, targetPath);
+    }
+
+    @Override
+    public void push(String sourcePath, String targetPath, PushCallback callback) {
+        subject.notify(sourcePath, targetPath, callback);
     }
 
 

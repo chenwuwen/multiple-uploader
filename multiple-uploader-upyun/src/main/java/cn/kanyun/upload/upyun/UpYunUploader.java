@@ -1,5 +1,7 @@
 package cn.kanyun.upload.upyun;
 
+import cn.kanyun.upload.ActualCloud;
+import cn.kanyun.upload.handler.PushCallback;
 import cn.kanyun.upload.spi.Uploader;
 import com.UpYun;
 import com.upyun.UpException;
@@ -34,6 +36,26 @@ public class UpYunUploader implements Uploader {
             e.printStackTrace();
         } catch (UpException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void push(String sourcePath, String targetPath, PushCallback callback) {
+        log.info(" [{}] 类 带回调的push([{},{}])", this.getClass().getName(), sourcePath, targetPath);
+        callback.setTargetStorageName(ActualCloud.UP_CLOUD.toString());
+        try {
+            boolean state = invokePush(sourcePath, targetPath);
+            if (state) {
+                callback.onSuccess(sourcePath, targetPath);
+            } else {
+                callback.onError(sourcePath, targetPath, new Exception("上传失败,但是不知道什么原因"));
+            }
+        } catch (IOException | UpException e) {
+            e.printStackTrace();
+            callback.onError(sourcePath, targetPath, e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onError(sourcePath, targetPath, e);
         }
     }
 

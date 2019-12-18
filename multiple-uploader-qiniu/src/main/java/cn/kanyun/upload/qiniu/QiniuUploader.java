@@ -1,5 +1,7 @@
 package cn.kanyun.upload.qiniu;
 
+import cn.kanyun.upload.ActualCloud;
+import cn.kanyun.upload.handler.PushCallback;
 import cn.kanyun.upload.spi.Uploader;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -34,6 +36,19 @@ public class QiniuUploader implements Uploader {
             invokePush(sourcePath, targetPath);
         } catch (QiniuException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void push(String sourcePath, String targetPath, PushCallback callback) {
+        log.info(" [{}] 类 带回调的push([{},{}]) ", this.getClass().getName(), sourcePath, targetPath);
+        callback.setTargetStorageName(ActualCloud.QINIU_CLOUD.toString());
+        try {
+            invokePush(sourcePath, targetPath);
+            callback.onSuccess(sourcePath, targetPath);
+        } catch (QiniuException e) {
+            e.printStackTrace();
+            callback.onError(sourcePath, targetPath, e);
         }
     }
 

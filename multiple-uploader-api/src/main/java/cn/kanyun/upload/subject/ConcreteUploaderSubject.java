@@ -1,5 +1,6 @@
 package cn.kanyun.upload.subject;
 
+import cn.kanyun.upload.handler.PushCallback;
 import cn.kanyun.upload.spi.Uploader;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,6 +9,7 @@ import java.util.Set;
 
 /**
  * 具体的主题
+ *
  * @author Kanyun
  * @date on 2019/12/16  13:44
  */
@@ -36,9 +38,16 @@ public class ConcreteUploaderSubject implements AbstractUploaderSubject {
 
     @Override
     public void notify(String sourcePath, String targetPath) {
-        log.info("开始通知观察者,观察者列表：[{}]",UPLOADER_OBSERVER_SET);
+        log.info("开始通知观察者,观察者列表：[{}]", UPLOADER_OBSERVER_SET);
         for (Uploader uploaderObserver : UPLOADER_OBSERVER_SET) {
             uploaderObserver.push(sourcePath, targetPath);
+        }
+    }
+
+    @Override
+    public void notify(String sourcePath, String targetPath, PushCallback callback) {
+        for (Uploader uploaderObserver : UPLOADER_OBSERVER_SET) {
+            uploaderObserver.push(sourcePath, targetPath, callback);
         }
     }
 }
