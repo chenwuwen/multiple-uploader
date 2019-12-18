@@ -42,7 +42,7 @@ public class UpYunUploader implements Uploader {
     @Override
     public void push(String sourcePath, String targetPath, PushCallback callback) {
         log.info(" [{}] 类 带回调的push([{},{}])", this.getClass().getName(), sourcePath, targetPath);
-        callback.setTargetStorageName(ActualCloud.UP_CLOUD.toString());
+        callback.setTargetStorageEnum(ActualCloud.UP_CLOUD);
         try {
             boolean state = invokePush(sourcePath, targetPath);
             if (state) {

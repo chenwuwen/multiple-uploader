@@ -42,7 +42,7 @@ public class QiniuUploader implements Uploader {
     @Override
     public void push(String sourcePath, String targetPath, PushCallback callback) {
         log.info(" [{}] 类 带回调的push([{},{}]) ", this.getClass().getName(), sourcePath, targetPath);
-        callback.setTargetStorageName(ActualCloud.QINIU_CLOUD.toString());
+        callback.setTargetStorageEnum(ActualCloud.QINIU_CLOUD);
         try {
             invokePush(sourcePath, targetPath);
             callback.onSuccess(sourcePath, targetPath);

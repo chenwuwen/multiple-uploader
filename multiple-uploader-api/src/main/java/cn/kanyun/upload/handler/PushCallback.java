@@ -1,9 +1,11 @@
 package cn.kanyun.upload.handler;
 
+import cn.kanyun.upload.ActualCloud;
 import lombok.Data;
 
 /**
  * 上传回调
+ *
  * @author Kanyun
  * @date on 2019/12/18  8:53
  */
@@ -11,9 +13,9 @@ import lombok.Data;
 public abstract class PushCallback {
 
     /**
-     * 存放的目的地名称,也就是哪个CND
+     * 存放的目的地枚举,也就是哪个CND
      */
-    private String targetStorageName;
+    private ActualCloud targetStorageEnum;
 
 
     /**
