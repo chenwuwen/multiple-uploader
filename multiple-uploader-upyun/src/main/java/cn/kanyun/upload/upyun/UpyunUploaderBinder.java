@@ -4,6 +4,7 @@ import cn.kanyun.upload.spi.IUploaderFactory;
 import cn.kanyun.upload.spi.UploaderFactoryBinder;
 import cn.kanyun.upload.exception.InitUploaderException;
 import com.UpYun;
+import com.google.auto.service.AutoService;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,12 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
+ * 使用@AutoService注解自动生成resources/META-INF/services下文件
  * @author Kanyun
  * @date on 2019/12/16  15:03
  */
 @Slf4j
+@AutoService(UploaderFactoryBinder.class)
 public class UpyunUploaderBinder implements UploaderFactoryBinder {
 
 

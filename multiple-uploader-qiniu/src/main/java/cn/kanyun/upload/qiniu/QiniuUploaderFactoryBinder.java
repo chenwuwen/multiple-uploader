@@ -3,6 +3,7 @@ package cn.kanyun.upload.qiniu;
 import cn.kanyun.upload.spi.IUploaderFactory;
 import cn.kanyun.upload.spi.UploaderFactoryBinder;
 import cn.kanyun.upload.exception.InitUploaderException;
+import com.google.auto.service.AutoService;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import com.qiniu.storage.Configuration;
@@ -15,10 +16,12 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
+ * 使用@AutoService注解自动生成resources/META-INF/services下文件
  * @author Kanyun
  * @date on 2019/12/16  14:40
  */
 @Slf4j
+@AutoService(UploaderFactoryBinder.class)
 public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
 
     private QiniuUploaderFactory defaultUploaderContext = new QiniuUploaderFactory();
