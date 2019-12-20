@@ -14,6 +14,7 @@ import java.util.Properties;
 
 /**
  * 使用@AutoService注解自动生成resources/META-INF/services下文件
+ *
  * @author Kanyun
  * @date on 2019/12/16  15:03
  */
@@ -87,7 +88,7 @@ public class UpyunUploaderBinder implements UploaderFactoryBinder {
      * @param userName
      * @param password
      */
-    void checkConfigValue(String bucket, String userName, String password) throws Exception {
+    private void checkConfigValue(String bucket, String userName, String password) throws Exception {
         if (Strings.isNullOrEmpty(bucket) || Strings.isNullOrEmpty(userName) || Strings.isNullOrEmpty(password)) {
             throw new Exception("请检查" + CONFIG_FILE_NAME + "文件中[" + AuthInfo.USERNAME.toString() + "," + AuthInfo.PASSWORD.toString() + "," + AuthInfo.BUCKET.toString() + "]的配置");
         }

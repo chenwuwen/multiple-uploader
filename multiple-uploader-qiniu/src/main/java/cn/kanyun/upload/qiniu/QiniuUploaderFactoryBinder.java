@@ -17,6 +17,7 @@ import java.util.Properties;
 
 /**
  * 使用@AutoService注解自动生成resources/META-INF/services下文件
+ *
  * @author Kanyun
  * @date on 2019/12/16  14:40
  */
@@ -50,11 +51,11 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
 
 
     void init() throws InitUploaderException {
-        log.info("common-uploader-qiniu 七牛云桥接器开始进行初始化");
+        log.info("multiple-uploader-qiniu 七牛云桥接器开始进行初始化");
 //      todo 这里可以读取classpath下特殊的storage.properties文件
-        String accessKey = "";
-        String secretKey = "";
-        String bucket = "";
+        String accessKey;
+        String secretKey;
+        String bucket;
         try {
             URL url = Resources.getResource(CONFIG_FILE_NAME);
             Properties prop = new Properties();
@@ -92,7 +93,7 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
      * @param bucket
      * @throws Exception
      */
-    void checkConfigValue(String accessKey, String secretKey, String bucket) throws Exception {
+    private void checkConfigValue(String accessKey, String secretKey, String bucket) throws Exception {
         if (Strings.isNullOrEmpty(bucket) || Strings.isNullOrEmpty(accessKey) || Strings.isNullOrEmpty(secretKey)) {
             throw new Exception("请检查" + CONFIG_FILE_NAME + "文件中[" + AuthInfo.SECRET_KEY.toString() + "," + AuthInfo.ACCESS_KEY.toString() + "," + AuthInfo.BUCKET.toString() + "]的配置");
         }
