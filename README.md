@@ -1,10 +1,10 @@
-###Multiple-uploader###
+### Multiple-uploader
 
-####1.功能描述####
+#### 1.功能描述
 >**Multiple-uploader**是一个Java上传工具,他最大的特点是可以通过简单的方式，将文件上传到多个CDN存储中(通过适配,也可以上传到其他存储)
 ,通过添加多个依赖,将文件上传到不同的位置,用于实现灾备和负载,同时当需要更改存储时,也可以很方便的进行实现的替换。
 
-####2.如何获得####
+####2.如何获得
 由于目前是快照版本,因此需要先添加仓库地址
 ```xml
 <repositories>
@@ -54,7 +54,7 @@
 可以看到,使用七牛云需要添加哪些SDK,那么需要将这些依赖添加进你的依赖管理中去,如果未添加,则编译不通过
 
 
-####3.如何使用####
+#### 3.如何使用
 获得依赖之后,首先需要在classpath 下创建storage.properties文件,[这里](https://github.com/chenwuwen/multiple-uploader/blob/master/storage.properties)
 这个文件下的配置,是会在初始化Uploader下进行读取的。
 
