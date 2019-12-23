@@ -1,8 +1,8 @@
 package cn.kanyun.upload.qiniu;
 
+import cn.kanyun.upload.spi.AbstractUploader;
 import cn.kanyun.upload.ActualCloud;
 import cn.kanyun.upload.handler.PushCallback;
-import cn.kanyun.upload.spi.Uploader;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.UploadManager;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date on 2019/12/16  13:48
  */
 @Slf4j
-public class QiniuUploader implements Uploader {
+public class QiniuUploader extends AbstractUploader {
 
     private String upToken;
     private UploadManager uploadManager;

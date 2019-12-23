@@ -1,5 +1,6 @@
 package cn.kanyun.upload.spi;
 
+import cn.kanyun.upload.handler.CompleteCallback;
 import cn.kanyun.upload.handler.PushCallback;
 
 /**
@@ -33,4 +34,39 @@ public interface Uploader {
      * @param targetPath 目标文件地址
      */
     void push(String sourcePath, String targetPath, PushCallback callback);
+
+    /**
+     * 基础的异步上传操作
+     *
+     * @param sourcePath
+     * @param targetPath
+     */
+    void asyncPush(String sourcePath, String targetPath);
+
+    /**
+     * 带上传完成回调的异步上传操作
+     *
+     * @param sourcePath
+     * @param targetPath
+     */
+    void asyncPush(String sourcePath, String targetPath, CompleteCallback completeCallback);
+
+    /**
+     * 带上传是否成功回调的异步上传操作
+     *
+     * @param sourcePath
+     * @param targetPath
+     */
+    void asyncPush(String sourcePath, String targetPath, PushCallback pushCallback);
+
+    /**
+     * 带上传是否成功回调/上传完成回调的异步上传操作
+     *
+     * @param sourcePath
+     * @param targetPath
+     * @param completeCallback
+     * @param pushCallback
+     */
+    void asyncPush(String sourcePath, String targetPath, CompleteCallback completeCallback, PushCallback pushCallback);
+
 }

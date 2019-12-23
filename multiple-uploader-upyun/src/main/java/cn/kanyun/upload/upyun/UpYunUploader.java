@@ -1,8 +1,8 @@
 package cn.kanyun.upload.upyun;
 
+import cn.kanyun.upload.spi.AbstractUploader;
 import cn.kanyun.upload.ActualCloud;
 import cn.kanyun.upload.handler.PushCallback;
-import cn.kanyun.upload.spi.Uploader;
 import com.UpYun;
 import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * @date on 2019/12/10  10:18
  */
 @Slf4j
-public class UpYunUploader implements Uploader {
+public class UpYunUploader extends AbstractUploader {
 
     private UpYun upyun;
 
