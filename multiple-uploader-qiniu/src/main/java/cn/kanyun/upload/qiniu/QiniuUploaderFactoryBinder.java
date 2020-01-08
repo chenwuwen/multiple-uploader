@@ -32,8 +32,7 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
      */
     private boolean initialized = false;
 
-    public QiniuUploaderFactoryBinder() throws InitUploaderException {
-        init();
+    public QiniuUploaderFactoryBinder() {
     }
 
     @Override
@@ -49,8 +48,8 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
         return defaultUploaderContext.getClass().getName();
     }
 
-
-    void init() throws InitUploaderException {
+    @Override
+    public void init() throws InitUploaderException {
         log.info("multiple-uploader-qiniu 七牛云桥接器开始进行初始化");
 //      todo 这里可以读取classpath下特殊的storage.properties文件
         String accessKey;

@@ -111,6 +111,7 @@ public class UploaderFactory {
             try {
 //                Class.newInstance()方法会调用类的无参构造函数,但是这个API,在java9之后不被推荐了,使用clazz.getDeclaredConstructor().newInstance()来代替,为了确保兼容性,还是用老方法
                 UploaderFactoryBinder binder = subType.newInstance();
+                binder.init();
                 IUploaderFactory uploaderFactory = binder.getUploaderFactory();
                 log.info("查找到IUploaderFactory实现类：[{}] ", binder.getUploaderFactoryClassStr());
                 concreteUploaderSubject.addObserver(uploaderFactory.getUploader());
@@ -118,11 +119,16 @@ public class UploaderFactory {
 //                CDN配置类加载出错
                 log.error("multiple-uploader 初始化时 [{}]捕捉到自定义异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
                 e.printStackTrace();
-                continue;
             } catch (IllegalAccessException e) {
+                log.error("multiple-uploader 初始化时 [{}]捕捉到反射异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
                 e.printStackTrace();
             } catch (InstantiationException e) {
+                log.error("multiple-uploader 初始化时 [{}]捕捉到反射异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
                 e.printStackTrace();
+            } catch (Exception e) {
+                log.error("multiple-uploader 初始化时 [{}]捕捉到其他异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
+                e.printStackTrace();
+
             }
         }
         INITIALIZATION_STATE = SUCCESSFUL_INITIALIZATION;
@@ -135,6 +141,7 @@ public class UploaderFactory {
      * 初始化观察者(绑定)
      */
     static void bindUploaderObserversBySpi() {
+        log.info("使用SPI机制进行查找UploaderFactoryBinder接口的实现类");
 //      利用ServiceLoader获取UploaderFactoryBinder子类,需要注意的是使用ServiceLoader,唯一强制要求的是，提供者类(子类)必须具有不带参数的构造方法，以便它们可以在加载中被实例化
         ServiceLoader<UploaderFactoryBinder> uploaderFactoryBinderServiceLoader = ServiceLoader.load(UploaderFactoryBinder.class);
         Iterator<UploaderFactoryBinder> it = uploaderFactoryBinderServiceLoader.iterator();
@@ -142,7 +149,10 @@ public class UploaderFactory {
         while (it.hasNext()) {
             count++;
             try {
+//                it.next()[it是ServiceLoader对象],调用的next()方法,会调用ServiceLoader的nextService()方法,最后利用反射调用了实现类的无参构造方法
+//                需要注意的是,如果这一步出现错误,会throw Error的子类对象,因此是无法使用Exception来捕获异常的,因此实现类的构造方法,不应该进行一些可能会抛出异常的操作
                 UploaderFactoryBinder binder = it.next();
+                binder.init();
                 IUploaderFactory uploaderFactory = binder.getUploaderFactory();
                 log.info("查找到IUploaderFactory实现类：[{}] ", binder.getUploaderFactoryClassStr());
                 concreteUploaderSubject.addObserver(uploaderFactory.getUploader());
@@ -150,7 +160,9 @@ public class UploaderFactory {
 //                CDN配置类加载出错
                 log.error("multiple-uploader 初始化时 [{}]捕捉到自定义异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
                 e.printStackTrace();
-                continue;
+            } catch (Exception e) {
+                log.error("multiple-uploader 初始化时 [{}]捕捉到其他异常,异常信息：[{}] 跳过...", UploaderFactory.class.getName(), e.getMessage());
+                e.printStackTrace();
             }
         }
         log.info("ServiceLoader开始加载[{}]的子类,共找到[{}]个", UploaderFactoryBinder.class.getName(), count);

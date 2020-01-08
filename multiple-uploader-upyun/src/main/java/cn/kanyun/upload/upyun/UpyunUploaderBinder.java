@@ -30,8 +30,7 @@ public class UpyunUploaderBinder implements UploaderFactoryBinder {
 
     private UpYunUploaderFactory defaultUploaderContext = new UpYunUploaderFactory();
 
-    public UpyunUploaderBinder() throws InitUploaderException {
-        init();
+    public UpyunUploaderBinder() {
     }
 
     @Override
@@ -47,8 +46,8 @@ public class UpyunUploaderBinder implements UploaderFactoryBinder {
         return defaultUploaderContext.getClass().getName();
     }
 
-
-    void init() throws InitUploaderException {
+    @Override
+    public void init() throws InitUploaderException {
         log.info("multiple-uploader-upyun 又拍云桥接器开始进行初始化");
         String bucket = "";
         String userName = "";

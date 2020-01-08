@@ -1,8 +1,11 @@
 package cn.kanyun.upload.spi;
 
+import cn.kanyun.upload.exception.InitUploaderException;
+
 /**
  * StaticUploadBinder 需要实现此接口
  * Binder产生工厂,有Binder生产的Factory,再生产Uploader
+ *
  * @author Kanyun
  * @date on 2019/12/6  16:33
  */
@@ -17,6 +20,7 @@ public interface UploaderFactoryBinder {
     /**
      * 得到UpLoaderFactory实例
      * 有了Uploader的工厂类,就可以阐述Uploader实例
+     *
      * @return
      */
     IUploaderFactory getUploaderFactory();
@@ -27,4 +31,11 @@ public interface UploaderFactoryBinder {
      * @return
      */
     String getUploaderFactoryClassStr();
+
+    /**
+     * 初始化操作,连接/认证等
+     *
+     */
+    void init() throws InitUploaderException;
+
 }
