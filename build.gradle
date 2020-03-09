@@ -7,7 +7,7 @@ allprojects {
     group 'cn.kanyun'
     version '1.0-SNAPSHOT'
     sourceCompatibility = 1.8
-
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 }
 
 subprojects {
@@ -16,6 +16,8 @@ subprojects {
 //    需要注意的而是,gradlew clean install时并没有把依赖打入到jar包中,而是生成了一个与jar包名称一致的pom文件,里面记录了依赖的信息,当上传jar包时,该pom文件也会被上传
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
+    //    签名插件,上传到中央仓库的release版本的依赖需要签名
+    apply plugin: 'signing'
 
     repositories {
         mavenLocal()
@@ -25,6 +27,41 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
+
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.java
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+        options.author = true
+        options.version = true
+        options.header = project.name
+
+    }
+
+    /**
+     * 默认使用gradlew clean install命令时,仅仅只是安装编译好的包,源码包
+     * 是不会安装到maven仓库的,添加此配置可以将源码包打入到本地maven仓库
+     * doc包也可以如法炮制
+     */
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+//   设置任务依赖关系,打jar包的同时,打源码包
+    jar.dependsOn(sourcesJar)
+
 
 
     dependencies {

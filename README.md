@@ -3,9 +3,10 @@
 #### 1.功能描述
 >**Multiple-uploader**是一个Java上传工具,他最大的特点是可以通过简单的方式，将文件上传到多个CDN存储中(通过适配,也可以上传到其他存储)
 ,通过添加多个依赖,将文件上传到不同的位置,用于实现灾备和负载,同时当需要更改存储时,也可以很方便的进行实现的替换。
+需要注意的是,目前只支持最简单的上传操作。不支持其他操作
 
 #### 2.如何获得
-由于目前是快照版本,因此需要先添加仓库地址
+~~如果需要获取快照版本,需要先添加仓库地址~~
 ```xml
 <repositories>
  
@@ -26,21 +27,21 @@
 <dependency>
   <groupId>io.github.chenwuwen</groupId>
   <artifactId>multiple-uploader-api</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${version}</version>
 </dependency>
 
 <!--七牛云适配器-->
 <dependency>
   <groupId>io.github.chenwuwen</groupId>
   <artifactId>multiple-uploader-qiniu</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${version}</version>
 </dependency>
 
 <!--又拍云适配器-->
 <dependency>
   <groupId>io.github.chenwuwen</groupId>
   <artifactId>multiple-uploader-upyun</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${version}</version>
 </dependency>
 
 ```

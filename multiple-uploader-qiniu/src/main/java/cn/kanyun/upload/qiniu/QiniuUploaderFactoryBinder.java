@@ -28,9 +28,37 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
     private QiniuUploaderFactory defaultUploaderContext = new QiniuUploaderFactory();
 
     /**
+     * 七牛云accessKey
+     */
+    private static String accessKey;
+    /**
+     * 七牛云secretKey
+     */
+    private static String secretKey;
+    /**
+     * 七牛云bucket
+     */
+    private static String bucket;
+    /**
+     * 七牛云token ,动态获得非文件读取
+     */
+    private static String upToken;
+    /**
+     * 七牛云token有效期
+     * 默认配置为一天 单位：秒
+     */
+    private static final long expire = 60 * 60 * 24;
+
+    /**
+     * 七牛云token下次失效时间
+     */
+    private static long next_invalid_time = 0;
+
+    /**
      * 初始化状态
      */
     private boolean initialized = false;
+
 
     public QiniuUploaderFactoryBinder() {
     }
@@ -51,11 +79,8 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
     @Override
     public void init() throws InitUploaderException {
         log.info("multiple-uploader-qiniu 七牛云桥接器开始进行初始化");
-//      todo 这里可以读取classpath下特殊的storage.properties文件
-        String accessKey;
-        String secretKey;
-        String bucket;
         try {
+//          这里读取classpath下的storage.properties文件
             URL url = Resources.getResource(CONFIG_FILE_NAME);
             Properties prop = new Properties();
             prop.load(url.openStream());
@@ -68,13 +93,12 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
             throw new InitUploaderException(this.getClass().getName() + "类读取" + CONFIG_FILE_NAME + "配置文件出错：" + e.getMessage());
         }
         try {
-//        构造一个带指定 Region 对象的配置类
+//            构造一个带指定 Region 对象的配置类
             Configuration cfg = new Configuration(Region.huabei());
-//        其他参数参考类注释
+//             其他参数参考类注释
             UploadManager uploadManager = new UploadManager(cfg);
-//       生成上传凭证，然后准备上传
-            Auth auth = Auth.create(accessKey, secretKey);
-            String upToken = auth.uploadToken(bucket);
+//            此处获取不获取token,问题都不大,主要是因为在上传时也会调用getToken()方法
+            getToken();
             defaultUploaderContext.setUploadManager(uploadManager);
             defaultUploaderContext.setUpToken(upToken);
         } catch (Exception e) {
@@ -96,5 +120,24 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
         if (Strings.isNullOrEmpty(bucket) || Strings.isNullOrEmpty(accessKey) || Strings.isNullOrEmpty(secretKey)) {
             throw new Exception("请检查" + CONFIG_FILE_NAME + "文件中[" + AuthInfo.SECRET_KEY.toString() + "," + AuthInfo.ACCESS_KEY.toString() + "," + AuthInfo.BUCKET.toString() + "]的配置");
         }
+    }
+
+
+    /**
+     * 获取七牛云token
+     */
+    protected static String getToken() {
+        long current_time = CurrentTimeMillisClock.getInstance().now();
+        if (next_invalid_time == 0 || next_invalid_time < current_time) {
+            log.info("七牛云由于初始化或者token到期,开始重新获取token");
+//       生成上传凭证，然后准备上传
+            Auth auth = Auth.create(accessKey, secretKey);
+//        得到七牛云token
+            upToken = auth.uploadToken(bucket, null, expire, null);
+//        设定token下次失效时间
+            next_invalid_time = current_time + expire;
+            return upToken;
+        }
+        return upToken;
     }
 }

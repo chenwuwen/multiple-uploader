@@ -1,23 +1,6 @@
-task sourcesJar (type:Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.java
-}
-
-//设置任务依赖关系,打jar包的同时,打源码包
-jar.dependsOn(sourcesJar)
-
-/**
- * 默认使用gradlew clean install命令时,仅仅只是安装编译好的包,源码包
- * 是不会安装到maven仓库的,添加此配置可以将源码包打入到本地maven仓库
- * doc包也可以如法炮制
- */
-artifacts {
-    archives sourcesJar
-}
-
 publishing {
     publications {
-        myPublication(MavenPublication) {
+        mavenJava(MavenPublication) {
 //            如果是war包填写components.web，如果是jar包填写components.java
             from components.java
 //            指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
@@ -25,23 +8,64 @@ publishing {
             groupId "io.github.chenwuwen"
             artifactId "$project.name"
             version "$version"
+//             增加这个签名名称所在的位置，signArchives 输出文件中以你项目名作为的 key。这里获取这一个签名文件
+//            artifact signArchives.outputFiles.get('fast_csv')
             artifact(sourcesJar) {
                 classifier = 'sources'
+//                extension = "zip"
+            }
+            artifact(javadocJar){
+                classifier = 'javadoc'
+            }
+
+
+//          添加 pom 相关信息,没有pom信息无法发布release版本
+            pom {
+                name = "multiple-uploader"
+                description = "方便的实时日志监控"
+                url = "http://www.example.com/project"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "kanyun"
+                        name = "wuwen Chen"
+                        email = "2504954849@qq.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/chenwuwen/multiple-uploader.git"
+                    developerConnection = "scm:git:https://github.com/chenwuwen/multiple-uploader.git"
+                    url = "https://github.com/chenwuwen/multiple-uploader"
+                }
+
             }
         }
     }
     repositories {
         maven {
+            if (project.version.endsWith('-SNAPSHOT')) {
+//                快照版本地址
 //            这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+//                正式版本地址
+//                这里如果配置的是sonatype(中央仓库的地址),需要注意上方的groupId,应该跟sonatype中的对应的ISSUE中设置的Group Id 一致
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
             credentials {
-                username = 'kanyun'
-                password = 'Chenwuwen@@321'
+//                这里的变量是配置在操作系统的GRADLE_USER_HOME环境变量下的gradle.properties中,如果操作系统未配置该变量,那么gradle.properties应该在${USER_HOME}/.gradle下
+                username = "${NEXUS_USERNAME}"
+                password = "${NEXUS_PASSWORD}"
             }
         }
+
     }
 }
-
 dependencies {
     compileOnly group: 'com.upyun', name: 'java-sdk', version: '4.1.3'
 }

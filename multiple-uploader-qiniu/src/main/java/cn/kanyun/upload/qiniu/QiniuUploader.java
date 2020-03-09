@@ -54,6 +54,7 @@ public class QiniuUploader extends AbstractUploader {
 
 
     private DefaultPutRet invokePush(String sourcePath, String targetPath) throws QiniuException {
+        upToken = QiniuUploaderFactoryBinder.getToken();
         Response response = uploadManager.put(sourcePath, targetPath, upToken);
         //解析上传成功的结果
         DefaultPutRet putRet = response.jsonToObject(DefaultPutRet.class);
