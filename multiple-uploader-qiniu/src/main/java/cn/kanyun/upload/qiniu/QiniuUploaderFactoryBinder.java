@@ -51,8 +51,9 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
 
     /**
      * 七牛云token下次失效时间
+     * 添加volatile关键字保证该值的内存可见性,确保线程安全
      */
-    private static long next_invalid_time = 0;
+    private static volatile long next_invalid_time = 0;
 
     /**
      * 初始化状态
@@ -125,8 +126,12 @@ public class QiniuUploaderFactoryBinder implements UploaderFactoryBinder {
 
     /**
      * 获取七牛云token
+     * 此处加synchronized不是为了防止初始化,因为在初始化时(寻找上传实现类)已经设置了synchronized
+     * 因此不必担心在初始化时next_invalid_time会重复计算,而token的有效期却只添加了一次
+     * 此处的sync关键字,主要是保证,初始化后如果在过期后的一瞬间多个线程触发上传操作的线程安全
+     * 保证next_invalid_time的数据准确
      */
-    protected static String getToken() {
+    protected synchronized static String getToken() {
         long current_time = CurrentTimeMillisClock.getInstance().now();
         if (next_invalid_time == 0 || next_invalid_time < current_time) {
             log.info("七牛云由于初始化或者token到期,开始重新获取token");
