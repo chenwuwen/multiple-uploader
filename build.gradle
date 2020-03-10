@@ -8,6 +8,10 @@ allprojects {
     version '1.0.0'
     sourceCompatibility = 1.8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+
+
+
 }
 
 subprojects {
@@ -16,13 +20,14 @@ subprojects {
 //    需要注意的而是,gradlew clean install时并没有把依赖打入到jar包中,而是生成了一个与jar包名称一致的pom文件,里面记录了依赖的信息,当上传jar包时,该pom文件也会被上传
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-    //    签名插件,上传到中央仓库的release版本的依赖需要签名
+//    签名插件,上传到中央仓库的release版本的依赖需要签名
     apply plugin: 'signing'
 
     repositories {
         mavenLocal()
         mavenCentral()
     }
+
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"

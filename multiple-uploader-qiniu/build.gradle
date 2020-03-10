@@ -22,9 +22,9 @@ publishing {
 
 //          添加 pom 相关信息,没有pom信息无法发布release版本
             pom {
-                name = "multiple-uploader"
-                description = "方便的实时日志监控"
-                url = "http://www.example.com/project"
+                name = "multiple-uploader-qiniu"
+                description = "批量上传器七牛云实现(配合multiple-uploader-api使用)"
+                url = "https://chenwuwen.github.io/"
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
@@ -68,7 +68,7 @@ publishing {
     }
 }
 
-//签名配置 必须在 publishing 配置之后 上传release版本的构件需要此配置,其中私钥配置在操作系统的GRADLE_USER_HOME环境变量下的gradle.properties中
+//  签名配置 必须在 publishing 配置之后 上传release版本的构件需要此配置,其中私钥配置在操作系统的GRADLE_USER_HOME环境变量下的gradle.properties中
 signing {
 //    后面这个mavenJava需要跟上面的publishing{publications{}}下面的保持一致
     sign publishing.publications.mavenJava
